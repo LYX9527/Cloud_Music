@@ -12,8 +12,8 @@
 
 - ✅ 使用 Vue.js 全家桶开发
 - 🔴 网易云账号登录（扫码/手机/邮箱登录）
-- 📺 支持 MV 播放
-- 📃 支持歌词显示
+- 📺 支持 MV 播放(暂未更新)
+- 📃 支持歌词显示(暂未更新)
 - 📻 每日推荐歌曲
 - 🛠 更多特性开发中
 
@@ -31,6 +31,8 @@ git clone --recursive https://github.com/LYX9527/Cloud_Music/tree/master
 3. 安装依赖
 
 ```sh
+cd app
+
 yarn install
 
 ```
@@ -46,12 +48,12 @@ VUE_APP_NETEASE_API_URL=http://localhost:3000
 6. 编译打包
 
 ```sh
-yarn run build
+yarn build
 ```
 
 7. 将 `/dist` 目录下的文件上传到你的 Web 服务器
 
-## :computer: 配置开发环境
+## 配置开发环境
 
 本项目由 [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi) 提供 API。
 
