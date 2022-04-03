@@ -25,7 +25,7 @@
 2. 克隆本仓库
 
 ```sh
-git clone --recursive https://github.com/qier222/YesPlayMusic.git
+git clone --recursive https://github.com/LYX9527/Cloud_Music/tree/master
 ```
 
 3. 安装依赖
