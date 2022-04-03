@@ -37,21 +37,13 @@ yarn install
 
 ```
 
-4. （可选）使用 Nginx 反向代理 API，将 API 路径映射为 `/api`，如果 API 和网页不在同一个域名下的话（跨域），会有一些 bug。
-
-5. 复制 `/.env.example` 文件为 `/.env`，修改里面 `VUE_APP_NETEASE_API_URL` 的值为网易云 API 地址。本地开发的话可以填写 API 地址为 `http://localhost:3000`，YesPlayMusic 地址为 `http://localhost:8080`。如果你使用了反向代理 API，可以填写 API 地址为 `/api`。
-
-```
-VUE_APP_NETEASE_API_URL=http://localhost:3000
-```
-
-6. 编译打包
+4. 编译打包
 
 ```sh
 yarn build
 ```
 
-7. 将 `/dist` 目录下的文件上传到你的 Web 服务器
+5. 将 `/dist` 目录下的文件上传到你的 Web 服务器
 
 ## 配置开发环境
 
@@ -62,9 +54,6 @@ yarn build
 ```shell
 # 安装依赖
 yarn install
-
-# 创建本地环境变量
-cp .env.example .env
 
 # 运行（网页端）
 yarn dev
