@@ -176,10 +176,8 @@ function replaceString(str: string, oldStr: string, newStr: string) {
   }
   return result
 }
+//校验手机号
+function phone() {
 
-//校验邮箱合法性
-function emailRegular(email: string) {
-  return true
 }
-
 </script>
