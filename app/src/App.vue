@@ -3,7 +3,8 @@
 </template>
 <script lang="ts" setup>
 //定义一个数组
-const arr = [12, 2, 3, 45, 5, 6, 7, 85,  9, 55]
+const arr = [12, 2, 3, 45, 5, 6, 7, 85, 9, 55]
+
 //冒泡排序
 function bubbleSort(arr: number[]) {
   for (let i = 0; i < arr.length; i++) {
@@ -17,6 +18,7 @@ function bubbleSort(arr: number[]) {
   }
   return arr
 }
+
 //选择排序
 function selectSort(arr: number[]) {
   for (let i = 0; i < arr.length; i++) {
@@ -34,8 +36,9 @@ function selectSort(arr: number[]) {
   }
   return arr
 }
+
 //插入排序
-function insertSort(arr:  number[]) {
+function insertSort(arr: number[]) {
   for (let i = 1; i < arr.length; i++) {
     let temp = arr[i]
     let j = i - 1
@@ -47,6 +50,7 @@ function insertSort(arr:  number[]) {
   }
   return arr
 }
+
 //希尔排序
 function shellSort(arr: number[]) {
   let gap = Math.floor(arr.length / 2)
@@ -64,8 +68,9 @@ function shellSort(arr: number[]) {
   }
   return arr
 }
+
 //归并排序
-function mergeSort(arr: number[]):(number|undefined)[] {
+function mergeSort(arr: number[]): (number | undefined)[] {
   if (arr.length <= 1) {
     return arr
   }
@@ -74,7 +79,8 @@ function mergeSort(arr: number[]):(number|undefined)[] {
   let right = arr.slice(middle)
   return merge(mergeSort(left) as number[], mergeSort(right) as number[])
 }
-function merge(left:number[], right:number[]):(number|undefined)[] {
+
+function merge(left: number[], right: number[]): (number | undefined)[] {
   let result = []
   while (left.length && right.length) {
     if (left[0] <= right[0]) {
@@ -91,6 +97,7 @@ function merge(left:number[], right:number[]):(number|undefined)[] {
   }
   return result
 }
+
 //快速排序
 function quickSort(arr: number[]): number[] {
   if (arr.length <= 1) {
@@ -118,6 +125,7 @@ const arr2 = [
   [16, 17, 18, 19, 20],
   [21, 22, 23, 24, 25]
 ]
+
 //二维数组转一维数组
 function twoDimensionalArrayToOneDimensionalArray(arr: number[][]) {
   let result = []
@@ -128,6 +136,7 @@ function twoDimensionalArrayToOneDimensionalArray(arr: number[][]) {
   }
   return result
 }
+
 //一维数组转二维数组
 function oneDimensionalArrayToTwoDimensionalArray(arr: number[], row: number, column: number) {
   let result = []
@@ -140,6 +149,7 @@ function oneDimensionalArrayToTwoDimensionalArray(arr: number[], row: number, co
   }
   return result
 }
+
 //返回单个字母在字符串中出现位置的数组
 function findPositionOfSingleLetter(str: string, letter: string) {
   let result = []
@@ -167,38 +177,9 @@ function replaceString(str: string, oldStr: string, newStr: string) {
   return result
 }
 
-console.log(replaceString("hello world hello world","ll","pp"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//校验邮箱合法性
+function emailRegular(email: string) {
+  return true
+}
 
 </script>
