@@ -5,7 +5,7 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import path from 'path'
 export default defineConfig({
-    base:process.env.NODE_ENV === 'production' ? './' : '/',
+    base:process.env.NODE_ENV === 'production' ? '/' : './',
     plugins: [
         vue(),
         AutoImport({
