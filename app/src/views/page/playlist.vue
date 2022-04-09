@@ -6,6 +6,7 @@ const {getPlayListDetail, getSongDetail, getSongUrl, getPlayListComment} = api
 import {ICtrlMusicList, ICtrlPlayingMusic, ICtrlPlayState, setMusicList, setPlayingMusic, setPlayState} from "@/hooks"
 import {PlayingMusic} from "@/typings";
 import type {TabsPaneContext} from 'element-plus'
+import {Ref} from "vue";
 
 const activeName = ref('first')
 
@@ -29,16 +30,40 @@ watch(() => route.query.id, (id) => {
   }
 })
 //歌单详情数据
-const playListData = ref({} as {
+const playListData: Ref<{
   coverImgUrl: string,
   name: string,
-  creator: { [key: string]: string },
+  creator: {
+    nickname: string,
+    avatarUrl: string
+  },
   updateTime: string,
   trackCount: number,
   description: string
+}> = ref({
+  coverImgUrl: '',
+  name: '',
+  creator: {
+    nickname: '',
+    avatarUrl: ''
+  },
+  updateTime: '',
+  trackCount: -1,
+  description: ''
 })
 //歌单中歌曲详情列表
-const songsListData = ref([] as any[])
+const songsListData:Ref<Array<{
+  id: string,
+  name: string,
+  dt: number,
+  al: {
+    picUrl: string,
+    name: string
+  },
+  ar: Array<{
+    name: string
+  }>,
+}>> = ref([])
 //歌单评论列表数据
 const commentListData = ref({
   comments: [],
@@ -137,7 +162,9 @@ const playMusicForId = (info: { [key: string]: any }) => {
             {{ v.al.name }}
           </div>
           <div class="flex items-center absolute right-12 flex-wrap w-36  h-full top-0">
-            {{ ("00" + Math.floor(Math.floor(v.dt / 1000) / 60)).slice(-2) }}:{{ ("00" + Math.floor(v.dt / 1000) % 60).slice(-2) }}
+            {{
+              ("00" + Math.floor(Math.floor(v.dt / 1000) / 60)).slice(-2)
+            }}:{{ ("00" + Math.floor(v.dt / 1000) % 60).slice(-2) }}
           </div>
         </div>
       </el-tab-pane>
@@ -145,9 +172,9 @@ const playMusicForId = (info: { [key: string]: any }) => {
         <div v-for="v in commentListData.comments" class="flex">
           <img :src="v.user.avatarUrl" alt="" class="w-12 h-12 rounded-full mx-2.5">
           <div class="flex-1">
-            {{v.user.nickname}}:{{v.content}}
+            {{ v.user.nickname }}:{{ v.content }}
           </div>
-          <div>{{dataFormat(new Date(v.time), 'YYYY年MM月DD日 HH:mm:ss')}}</div>
+          <div>{{ dataFormat(new Date(v.time), 'YYYY年MM月DD日 HH:mm:ss') }}</div>
         </div>
       </el-tab-pane>
     </el-tabs>

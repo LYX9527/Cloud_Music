@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import api from "@/api/banner";
 import router from "@/router";
+import {Ref} from "vue";
 
 const {getBanner, getRecommendList, getAllTop, getNewAlbum} = api
 onMounted(() => {
@@ -10,13 +11,13 @@ onMounted(() => {
   getNewAlbumData()
 })
 //轮播图列表
-const bannerList = ref([] as any[]);
+const bannerList:Ref<Array<{encodeId:string,imageUrl:string}>> = ref([] as Array<any>);
 //热门推荐歌单
-const recommendList = ref([] as any[]);
+const recommendList:Ref<Array<{copywriter:string,name:string,picUrl:string,id:string}>> = ref([] as any[]);
 //排行榜列表
-const topList = ref([] as any[]);
+const topList:Ref<Array<{coverImgUrl:string,name:string,updateFrequency:string,id:string}>> = ref([] as any[]);
 //新专速递列表
-const newAlbumList = ref([] as any[])
+const newAlbumList:Ref<Array<{subType:string,name:string,picUrl:string,id:string}>> = ref([] as any[])
 //获取轮播图数据
 const getBannerData = () => {
   getBanner({type: 0}).then((data: { [key: string]: any }) => {
