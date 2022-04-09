@@ -115,7 +115,7 @@ interface IUserPlayList {
   coverImgUrl: string;
 }
 //用户收藏歌单
-const userCollectionPlayListData = ref([]);
+const userCollectionPlayListData:Ref<Array<IUserPlayList>> = ref([]);
 //用户创建歌单
 const userCreatePlayListData:Ref<Array<IUserPlayList>> = ref([]);
 const musicProgress = ref(0)
