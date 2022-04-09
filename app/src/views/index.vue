@@ -11,6 +11,7 @@ const audio = ref(null)
 //获取vuex的store
 const store = useStore()
 import {ICtrlPlayState, setPlayState} from "@/hooks"
+import {Ref} from "vue";
 
 onMounted(() => {
   setplaystate(false);
@@ -104,10 +105,19 @@ watch([playStatus, playingMusic], (newVal: [boolean, PlayingMusic], oldVal: [boo
     }
   }
 })
+interface IUserPlayList {
+  id: string;
+  name: string;
+  picUrl: string;
+  playCount: number;
+  trackCount: number;
+  userId: string;
+  coverImgUrl: string;
+}
 //用户收藏歌单
 const userCollectionPlayListData = ref([]);
 //用户创建歌单
-const userCreatePlayListData = ref([]);
+const userCreatePlayListData:Ref<Array<IUserPlayList>> = ref([]);
 const musicProgress = ref(0)
 //上一首
 const lastMusic = () => {
@@ -171,10 +181,10 @@ const getUserPlayListData = (uid: string) => {
   getUserPlayList({uid}).then((data: { [key: string]: any }) => {
     console.log(data)
     if (data.code == 200) {
-      userCollectionPlayListData.value = data.playlist.filter((item: { [key: string]: string }) => {
+      userCollectionPlayListData.value = data.playlist.filter((item: IUserPlayList) => {
         return item.userId != uid
       })
-      userCreatePlayListData.value = data.playlist.filter((item: { [key: string]: string }) => {
+      userCreatePlayListData.value = data.playlist.filter((item: IUserPlayList) => {
         return item.userId == uid
       })
     }
@@ -378,7 +388,6 @@ const showPlayList = (id: string) => {
     span {
       display: block;
       //background-color: #a58;
-      width: 10%;
       font-size: 25px;
       //color: antiquewhite;
       line-height: 40px;

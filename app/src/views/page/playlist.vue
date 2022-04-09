@@ -65,9 +65,22 @@ const songsListData:Ref<Array<{
   }>,
 }>> = ref([])
 //歌单评论列表数据
-const commentListData = ref({
+interface IComment {
+  comments: Array<{
+    content: string,
+    time: string,
+    likedCount: number,
+    user: {
+      nickname: string,
+      avatarUrl: string
+    }
+  }>,
+  total: number,
+  code?: number
+}
+const commentListData:Ref<IComment> = ref({
   comments: [],
-  total: 0
+  total: 0,
 })
 //获取歌单详情
 const getPlayListDetailData = (id: any) => {
@@ -84,7 +97,7 @@ const getPlayListDetailData = (id: any) => {
           songsListData.value = data.songs
         }
       })
-      getPlayListComment({id}).then((data: { [key: string]: any }) => {
+      getPlayListComment({id}).then((data: IComment) => {
         if (data.code == 200) {
           commentListData.value.comments = data.comments
           commentListData.value.total = data.total
