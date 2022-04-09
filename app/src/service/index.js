@@ -7,7 +7,7 @@ import cache from '@/service/cache'
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 axios.defaults.withCredentials = true;
 const service = axios.create({
-    baseURL: "https://124.223.203.125:11222/",
+    baseURL: "http://124.223.203.125:11222/",
     timeout: 10000
 })
 // request拦截器
