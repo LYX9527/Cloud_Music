@@ -1,25 +1,18 @@
 <script lang="ts" setup>
 import api from "@/api/banner"
-import {getStoreData, ICtrlPlayingMusic, setPlayingMusic} from "@/hooks"
+import {ICtrlPlayingMusic, setPlayingMusic} from "@/hooks"
 import Cookies from "js-cookie";
 import {IState, PlayingMusic} from "@/typings";
+import {ICtrlPlayState, setPlayState} from "@/hooks"
+import {Ref} from "vue";
 
+const router = useRouter();
 const {setplayingmusic}: ICtrlPlayingMusic = setPlayingMusic();
 const {getSongUrl, getUserPlayList} = api
 //获取audio元素
 const audio = ref(null)
 //获取vuex的store
 const store = useStore()
-import {ICtrlPlayState, setPlayState} from "@/hooks"
-import {Ref} from "vue";
-
-onMounted(() => {
-  setplaystate(false);
-  clearInterval(timer)
-})
-onUnmounted(() => {
-  clearInterval(timer)
-})
 const {setplaystate}: ICtrlPlayState = setPlayState();
 const musicInfo = reactive({
   name: '',
@@ -34,7 +27,9 @@ const playStatus = computed(() => store.state.playState)
 const playingMusic = computed(() => store.state.playingMusic)
 const musicListData = computed(() => store.state.musicList);
 const userInfo = computed(() => store.state.userInfo);
+const listStatus = ref(false)
 const audioUrl = ref("");
+const musicProgress = ref(0)
 //双击播放歌曲
 const playMusicForId = (info: { [key: string]: any }) => {
   getSongUrl({id: info.id}).then((data: { [key: string]: any }) => {
@@ -54,6 +49,13 @@ const playMusicForId = (info: { [key: string]: any }) => {
 }
 //设置定时器
 let timer: NodeJS.Timer;
+onMounted(() => {
+  setplaystate(false);
+  clearInterval(timer)
+})
+onUnmounted(() => {
+  clearInterval(timer)
+})
 //监听播放自动下一首
 watch([playStatus, playingMusic], (newVal: [boolean, PlayingMusic], oldVal: [boolean, PlayingMusic]) => {
   const AudioPlayer = (audio.value as any)
@@ -105,6 +107,7 @@ watch([playStatus, playingMusic], (newVal: [boolean, PlayingMusic], oldVal: [boo
     }
   }
 })
+
 interface IUserPlayList {
   id: string;
   name: string;
@@ -114,11 +117,11 @@ interface IUserPlayList {
   userId: string;
   coverImgUrl: string;
 }
+
 //用户收藏歌单
-const userCollectionPlayListData:Ref<Array<IUserPlayList>> = ref([]);
+const userCollectionPlayListData: Ref<Array<IUserPlayList>> = ref([]);
 //用户创建歌单
-const userCreatePlayListData:Ref<Array<IUserPlayList>> = ref([]);
-const musicProgress = ref(0)
+const userCreatePlayListData: Ref<Array<IUserPlayList>> = ref([]);
 //上一首
 const lastMusic = () => {
   let nowIndex = 0;
@@ -149,6 +152,7 @@ const nextMusic = () => {
   })
   playMusicForId(musicListData.value[nowIndex + 1]);
 }
+//控制进度条
 const changeProgress = () => {
   nextTick(() => {
     if (audio.value != null) {
@@ -156,14 +160,13 @@ const changeProgress = () => {
     }
   })
 }
-const router = useRouter();
+//跳转到登录
 const alertLogin = () => {
   router.push({
     path: "/login"
   })
 }
 
-const listStatus = ref(false)
 //控制播放与暂停
 const playCtrl = () => {
   setplaystate(!playStatus.value);
@@ -177,6 +180,10 @@ const ctrlSidebar = () => {
     ElMessage.error("请先登录");
   }
 }
+/**
+ * 获取用户歌单
+ * @param uid 用户id
+ */
 const getUserPlayListData = (uid: string) => {
   getUserPlayList({uid}).then((data: { [key: string]: any }) => {
     console.log(data)
@@ -199,18 +206,18 @@ const showPlayList = (id: string) => {
 }
 </script>
 <template>
-  <div class="common-layout h-full w-full">
-    <el-container class="w-full h-full">
-      <el-aside :style="{width:`${sidebarWidth}px`}" class="">
+  <div class="common-layout my_xy_full">
+    <el-container class="my_xy_full">
+      <el-aside :style="{width:`${sidebarWidth}px`}">
         <div class="w-full h-16 font-bold text-2xl text-center leading-12">我的歌单</div>
-        <div class="px-2 h-12 font-bold flex items-center">我创建的歌单</div>
-        <div v-for="v in userCreatePlayListData" :key="v.id" class="px-2 flex cursor-pointer py-1 hover:bg-blue-300"
+        <div class="song_list_title">我创建的歌单</div>
+        <div v-for="v in userCreatePlayListData" :key="v.id" class="song_list"
              @click="showPlayList(v.id)">
           <img :src="v.coverImgUrl" alt="" class="w-12 h-12">
           <span class="text-sm flex-1 py-2 px-1">{{ v.name }}</span>
         </div>
-        <div class="px-2 h-12 font-bold flex items-center">我收藏的歌单</div>
-        <div v-for="v in userCollectionPlayListData" :key="v.id" class="px-2 flex cursor-pointer py-1 hover:bg-blue-300"
+        <div class="song_list_title">我收藏的歌单</div>
+        <div v-for="v in userCollectionPlayListData" :key="v.id" class="song_list"
              @click="showPlayList(v.id)">
           <img :src="v.coverImgUrl" alt="" class="w-12 h-12">
           <span class="text-sm flex-1 py-2 px-1">{{ v.name }}</span>
@@ -248,7 +255,7 @@ const showPlayList = (id: string) => {
         </el-header>
         <el-main>
           <el-drawer v-model="listStatus" title="I am the title" :with-header="false">
-            <div class="h-full w-full overflow-auto music_list">
+            <div class="my_xy_full overflow-auto music_list">
               <div class="w-full h-16 font-bold text-2xl flex 2xl:items-center">正在播放</div>
               <div
                   class="h-14 box-border py-1 hover:bg-blue-300 justify-between items-center px-2 rounded-xl relative w-80 cursor-pointer my-1">
@@ -282,7 +289,7 @@ const showPlayList = (id: string) => {
           </el-drawer>
           <router-view></router-view>
         </el-main>
-        <el-footer class="flex justify-between">
+        <el-footer class="my_text_between">
           <audio :src="audioUrl" class="hidden" ref="audio"></audio>
           <div class="w-1/6 flex items-center">
             <img class="w-16 h-16" v-if="musicInfo.picUrl===''" src="@/assets/netease-music.png" alt="">
@@ -292,44 +299,39 @@ const showPlayList = (id: string) => {
               <div class="w-full h-1/2 flex items-center text-sm text-gray-400">{{ musicInfo.author }}</div>
             </div>
           </div>
-          <div class="w-1/6 h-full flex flex-wrap">
-            <div class="flex justify-around items-center h-1/2 w-full box-border pt-4">
-              <b-icon-skip-backward-fill @click="lastMusic"
-                                         class="transition duration-500 ease-in-out transform hover:scale-110  cursor-pointer h-8 w-8"/>
-              <b-icon-skip-end-circle-fill @click="playCtrl" v-if="!playStatus"
-                                           class="transition duration-500 ease-in-out transform  hover:scale-110 cursor-pointer h-8 w-8"/>
-              <b-icon-pause-circle-fill @click="playCtrl" v-if="playStatus"
-                                        class="transition duration-500 ease-in-out transform  hover:scale-110 cursor-pointer h-8 w-8"/>
-              <b-icon-skip-forward-fill @click="nextMusic"
-                                        class="transition duration-500 transform  hover:scale-110 cursor-pointer h-8 w-8"/>
+          <div class="w-1/3 h-full flex flex-wrap">
+            <div class="my_text_around h-1/2 w-full box-border pt-4">
+              <b-icon-skip-backward-fill @click="lastMusic" class="my_ctrl_icon"/>
+              <b-icon-skip-end-circle-fill @click="playCtrl" v-if="!playStatus" class="my_ctrl_icon"/>
+              <b-icon-pause-circle-fill @click="playCtrl" v-if="playStatus" class="my_ctrl_icon"/>
+              <b-icon-skip-forward-fill @click="nextMusic" class="my_ctrl_icon"/>
             </div>
-            <div class="h-1/2 w-full flex items-center">
-              <div class="flex items-center h-full w-12 text-gray-400">0:00</div>
-              <div class="flex items-center h-full w-96 mx-2.5">
+            <div class="h-1/2 w-full my_text_around">
+              <div class="my_time_step">00:00</div>
+              <div class="flex items-center h-full w-[80%] mx-2.5">
                 <el-slider @change="changeProgress" v-model="musicProgress" :step="1" size='small'
                            class="h-full w-full " :show-tooltip="false"
                            :max="Math.floor(musicInfo.size/1000)"/>
               </div>
-              <div class="flex items-center h-full w-12 text-gray-400">
+              <div class="my_time_step">
                 {{ ("00" + Math.floor(Math.floor(musicInfo.size / 1000) / 60)).slice(-2) }}:{{
                   ("00" + Math.floor(musicInfo.size / 1000) % 60).slice(-2)
                 }}
               </div>
             </div>
           </div>
-          <div class="w-1/6 flex justify-between items-center">
-            <b-icon-music-note-list @click="listStatus = true"
-                                    class="transition duration-500 transform  hover:scale-110 cursor-pointer h-8 w-8"/>
-            <b-icon-arrow-repeat class="transition duration-500 transform  hover:scale-110 cursor-pointer h-8 w-8"/>
-            <b-icon-arrow-left-right class="transition duration-500 transform  hover:scale-110 cursor-pointer h-8 w-8"/>
-            <b-icon-capslock class="transition duration-500 transform  hover:scale-110 cursor-pointer h-8 w-8"/>
+          <div class="w-1/6 my_text_between">
+            <b-icon-music-note-list @click="listStatus = true" class="my_ctrl_icon"/>
+            <b-icon-arrow-repeat class="my_ctrl_icon"/>
+            <b-icon-arrow-left-right class="my_ctrl_icon"/>
+            <b-icon-capslock class="my_ctrl_icon"/>
           </div>
         </el-footer>
       </el-container>
     </el-container>
   </div>
 </template>
-<style lang="scss">
+<style lang="scss" scoped>
 .el-drawer {
   width: 24rem !important;
 }
@@ -433,5 +435,17 @@ const showPlayList = (id: string) => {
   user-select: none;
   height: 100px !important;
   border-top: 1px solid #8888;
+}
+
+.my_time_step {
+  @apply flex items-center h-full w-[10%] text-gray-400
+}
+
+.song_list_title {
+  @apply px-2 h-12 font-bold my_text_left
+}
+
+.song_list {
+  @apply px-2 flex cursor-pointer py-1 hover:bg-blue-300
 }
 </style>

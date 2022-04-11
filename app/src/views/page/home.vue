@@ -133,16 +133,7 @@ const showPlayList = (id: string) => {
   }
 }
 
-.player_icon {
-  $img: 'https://static.pexels.com/photos/373934/pexels-photo-373934.jpeg';
-  border-radius: 50%;
-  line-height: 2;
-  margin: auto;
-  color: #eff9;
-  background: rgba(255, 255, 255, .3);
-  cursor: pointer;
-  box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .3);
-}
+
 
 .grid_box {
   &::after {
