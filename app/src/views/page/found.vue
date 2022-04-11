@@ -1,9 +1,7 @@
 <script lang="ts" setup>
 import api from "@/api/found"
 import {Ref} from "vue";
-
 const {getSongSingleTable, getSongSingleList} = api
-
 interface ITag {
   category: number,
   hot: boolean,
@@ -77,8 +75,12 @@ const changeTypeStatus = (type: ITag) => {
 const loadMore = () => {
   getSongSingleList({cat:tagList.value.find(item => item.id === nowType.value)!.name, limit:25,before:loadMoreTime.value}).then((data: { code: number, playlists: Array<ISongListItem>,lasttime:string }) => {
     if (data.code === 200) {
-      songList.value = [...songList.value, ...data.playlists]
-      loadMoreTime.value = data.lasttime
+      if(data.playlists.length===0){
+        ElMessage.warning("没有更多啦，选择其他的看看吧")
+      }else{
+        songList.value = [...songList.value, ...data.playlists]
+        loadMoreTime.value = data.lasttime
+      }
     }
   })
 }
