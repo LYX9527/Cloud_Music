@@ -249,37 +249,38 @@ const showPlayList = (id: string) => {
               <span>音乐库</span>
             </div>
             <div class="h_login w-1/4">
-              <img src="@/assets/header_defult.jpg" alt="" class="w-10" @click="alertLogin">
+              <img src="@/assets/header_defult.jpg"  alt="" class="w-1.5" @click="alertLogin">
             </div>
           </div>
         </el-header>
         <el-main>
-          <el-drawer v-model="listStatus" title="I am the title" :with-header="false">
+          <el-drawer v-model="listStatus" :with-header="false">
             <div class="my_xy_full overflow-auto music_list">
-              <div class="w-full h-16 font-bold text-2xl flex 2xl:items-center">正在播放</div>
+              <div class="w-full h-2 font-bold text-[24px] flex my_text_left">正在播放</div>
               <div
-                  class="h-14 box-border py-1 hover:bg-blue-300 justify-between items-center px-2 rounded-xl relative w-80 cursor-pointer my-1">
-                <img class="w-12 h-12 rounded-xl" :src="musicInfo.picUrl" alt="">
-                <div class="absolute left-16 flex-wrap w-36 flex h-full leading-8 top-0">
-                  <div class="w-full h-1/2 truncate">{{ musicInfo.name }}</div>
-                  <div class="w-full h-1/2 text-sm text-gray-400">{{ musicInfo.author }}</div>
+                  class="h-3 box-border px-0.5 my_text_between hover:bg-blue-300 rounded-[10px] relative  cursor-pointer ">
+                <img class="w-2.5 h-2.5 rounded-[10px]" v-if="musicInfo.picUrl===''" src="@/assets/netease-music.png" alt="">
+                <img class="w-2.5 h-2.5 rounded-[10px]" v-else :src="musicInfo.picUrl" alt="">
+                <div class="flex-wrap w-8 flex h-full flex-1">
+                  <div class="my_text_center w-full h-1/2 truncate">{{ musicInfo.name }}</div>
+                  <div class="my_text_center w-full h-1/2 text-[14px] text-gray-400">{{ musicInfo.author }}</div>
                 </div>
-                <div class="flex items-center right-0 absolute flex-wrap w-16 h-full top-0">
+                <div class="flex items-center right-0 absolute flex-wrap w-2 h-full ">
                   {{
                     ("00" + Math.floor(Math.floor(musicInfo.size / 1000) / 60)).slice(-2)
                   }}:{{ ("00" + Math.floor(musicInfo.size / 1000) % 60).slice(-2) }}
                 </div>
               </div>
-              <div class="w-full h-16 font-bold text-2xl flex 2xl:items-center">即将播放</div>
+              <div class="w-full h-2 font-bold text-[24px] flex my_text_left">即将播放</div>
               <div
-                  class="h-14 box-border py-1 hover:bg-blue-300 justify-between items-center px-2 rounded-xl relative w-80 cursor-pointer my-1"
+                  class="h-3 box-border px-0.5 my_text_between hover:bg-blue-300 rounded-[10px] relative  cursor-pointer "
                   v-for="v in musicListData" @click="playMusicForId(v)">
-                <img class="w-12 h-12 rounded-xl" :src="v.al.picUrl" alt="">
-                <div class="absolute left-16 flex-wrap w-36 flex h-full leading-8 top-0">
-                  <div class="w-full h-1/2 truncate">{{ v.name }}</div>
-                  <div class="w-full h-1/2 text-sm text-gray-400">{{ v.ar[0].name }}</div>
+                <img class="w-2.5 h-2.5 rounded-[10px]" :src="v.al.picUrl" alt="">
+                <div class="flex-wrap w-8 flex h-full flex-1">
+                  <div class="my_text_center w-full h-1/2 truncate">{{ v.name }}</div>
+                  <div class="my_text_center w-full h-1/2 text-[14px] text-gray-400">{{ v.ar[0].name }}</div>
                 </div>
-                <div class="flex items-center right-0 absolute flex-wrap w-16 h-full top-0">
+                <div class="flex items-center right-0 absolute flex-wrap w-2 h-full ">
                   {{
                     ("00" + Math.floor(Math.floor(v.dt / 1000) / 60)).slice(-2)
                   }}:{{ ("00" + Math.floor(v.dt / 1000) % 60).slice(-2) }}
@@ -292,15 +293,15 @@ const showPlayList = (id: string) => {
         <el-footer class="my_text_between">
           <audio :src="audioUrl" class="hidden" ref="audio"></audio>
           <div class="w-1/6 flex items-center">
-            <img class="w-16 h-16" v-if="musicInfo.picUrl===''" src="@/assets/netease-music.png" alt="">
-            <img class="w-16 h-16" v-else :src="musicInfo.picUrl" alt="">
-            <div class="flex-1 h-full flex flex-wrap px-4 py-1">
-              <div class="w-full h-1/2 flex items-center truncate">{{ musicInfo.name }}</div>
-              <div class="w-full h-1/2 flex items-center text-sm text-gray-400">{{ musicInfo.author }}</div>
+            <img class="w-3 h-3" v-if="musicInfo.picUrl===''" src="@/assets/netease-music.png" alt="">
+            <img class="w-3 h-3" v-else :src="musicInfo.picUrl" alt="">
+            <div class=" h-full flex flex-wrap ml-[10px]">
+              <div class="w-full h-1/2 flex items-center text-[18px] truncate">{{ musicInfo.name }}</div>
+              <div class="w-full h-1/2 flex items-center  text-gray-400">{{ musicInfo.author }}</div>
             </div>
           </div>
-          <div class="w-1/3 h-full flex flex-wrap">
-            <div class="my_text_around h-1/2 w-full box-border pt-4">
+          <div class="w-1/2 h-full flex flex-wrap">
+            <div class="my_text_around h-1/2 w-full box-border pt-0.5">
               <b-icon-skip-backward-fill @click="lastMusic" class="my_ctrl_icon"/>
               <b-icon-skip-end-circle-fill @click="playCtrl" v-if="!playStatus" class="my_ctrl_icon"/>
               <b-icon-pause-circle-fill @click="playCtrl" v-if="playStatus" class="my_ctrl_icon"/>
@@ -308,7 +309,7 @@ const showPlayList = (id: string) => {
             </div>
             <div class="h-1/2 w-full my_text_around">
               <div class="my_time_step">00:00</div>
-              <div class="flex items-center h-full w-[80%] mx-2.5">
+              <div class="flex items-center h-full w-[90%] ml-1.5 mr-0.5">
                 <el-slider @change="changeProgress" v-model="musicProgress" :step="1" size='small'
                            class="h-full w-full " :show-tooltip="false"
                            :max="Math.floor(musicInfo.size/1000)"/>
@@ -333,7 +334,7 @@ const showPlayList = (id: string) => {
 </template>
 <style lang="scss" scoped>
 .el-drawer {
-  width: 24rem !important;
+  width: 400px !important;
 }
 
 .el-aside {
@@ -344,10 +345,6 @@ const showPlayList = (id: string) => {
 
 .music_list {
   @include overHidden;
-}
-
-.el-carousel {
-  width: 800px;
 }
 
 .toolbar {

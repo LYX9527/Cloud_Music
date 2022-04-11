@@ -139,39 +139,35 @@ const checkPhoneLoginMethods = () => {
       <div class="tip">请使用手机App扫码登陆</div>
     </div>
     <div class="box" v-if="nowLoginMethod==='AccountLogin'">
-      <img src="@/assets/netease-music.png" alt="" class="w-10 h-10 mx-auto">
+      <img src="@/assets/netease-music.png" alt="" class="w-4 h-4 mx-auto my-1.5">
       <p class="text-center leading-loose">登陆网易云音乐</p>
       <div class="rounded-md shadow-sm -space-y-px">
-        <div>
+        <div class="h-2">
           <input v-model="AccountForm.phone"
-                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500
-                 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                 class="my_input_up"
                  placeholder="手机号">
         </div>
         <div v-show="isPhoneLogin">
           <input v-model="AccountForm.password" type="password"
-                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500
-                  text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                 class="my_input_down"
                  placeholder="密码">
         </div>
         <div v-show="!isPhoneLogin">
           <input v-model="AccountForm.captcha"
-                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500
-                  text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                 class="my_input_down"
                  placeholder="验证码">
         </div>
 
-        <div class="w-full h-11">
-          <span class="block leading-10 text-s h-full w-full text-right" style="cursor: pointer"
+        <div class="w-full h-2">
+          <span class="block leading-[60px] text-s h-full w-full text-right" style="cursor: pointer"
                 @click.stop="checkPhoneLoginMethods">
             <span v-show="!isPhoneLogin" class="xl:text-indigo-500" @click.stop="getCheckCode">获取验证码</span>
             {{ isPhoneLogin ? "切换验证码登陆" : "切换密码登陆" }}</span>
         </div>
-        <button class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md
-        text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        <button class="my_button"
                 @click="AccountLogin">
           <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-            <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" xmlns="http://www.w3.org/2000/svg"
+            <svg class="h-0.5 w-0.5 text-indigo-500 group-hover:text-indigo-400" xmlns="http://www.w3.org/2000/svg"
                  viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
               <path fill-rule="evenodd"
                     d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
@@ -183,30 +179,27 @@ const checkPhoneLoginMethods = () => {
       </div>
     </div>
     <div class="box" v-if="nowLoginMethod==='EmailLogin'">
-      <img src="@/assets/netease-music.png" alt="" class="w-10 h-10 mx-auto">
+      <img src="@/assets/netease-music.png" alt="" class="w-4 h-4 mx-auto my-1.5">
       <p class="text-center leading-loose">登陆网易云音乐</p>
       <div class="rounded-md shadow-sm -space-y-px">
-        <div>
+        <div class="h-2">
           <label for="email-address" class="sr-only">Email address</label>
           <input v-model="EmailForm.email" id="email-address" name="email" type="email" autocomplete="email" required
-                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500
-                 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                 class="my_input_up"
                  placeholder="网易163邮箱">
         </div>
-        <div>
+        <div class="h-2">
           <label for="password" class="sr-only">Password</label>
           <input v-model="EmailForm.password" id="password" name="password" type="password"
                  autocomplete="current-password" required
-                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500
-                  text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                 class="my_input_down"
                  placeholder="邮箱密码">
         </div>
-        <div class="w-full h-10"></div>
-        <button class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md
-        text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        <div class="w-full h-2"></div>
+        <button class="group my_button"
                 @click="EmailLogin">
           <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-            <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" xmlns="http://www.w3.org/2000/svg"
+            <svg class="h-0.5 w-0.5 text-indigo-500 group-hover:text-indigo-400" xmlns="http://www.w3.org/2000/svg"
                  viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
               <path fill-rule="evenodd"
                     d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
@@ -227,14 +220,12 @@ const checkPhoneLoginMethods = () => {
 </template>
 <style lang="scss" scoped>
 .loginPage {
-  width: 24rem;
-  height: 48rem;
+  width: 500px;
+  height: 500px;
   @include Middle;
   user-select: none;
 
   .box {
-    width: 15rem;
-    height: 16rem;
     position: relative;
     border-radius: 15px;
     box-sizing: border-box;
@@ -245,7 +236,9 @@ const checkPhoneLoginMethods = () => {
 
     .QCimg {
       width: 90%;
-      height: 216px;
+      //height: 216px;
+      width: 400px;
+      height: 400px;
       position: absolute;
       top: 0;
       margin: auto;
@@ -283,11 +276,10 @@ const checkPhoneLoginMethods = () => {
 
   .checkMethod {
     width: 100%;
-    height: 2rem;
+    height: 50px;
     text-align: center;
-    line-height: 2rem;
     position: absolute;
-    bottom: 12rem;
+    bottom: 0;
     user-select: none;
 
     span {
@@ -298,5 +290,18 @@ const checkPhoneLoginMethods = () => {
       }
     }
   }
+}
+
+.my_input_down{
+  @apply appearance-none rounded-none relative block w-full px-[30px] py-[10px] border border-gray-300 placeholder-gray-500
+  text-gray-900 rounded-b-[10px] focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-[18px]
+}
+.my_input_up{
+  @apply appearance-none rounded-none relative block w-full px-[30px] py-[10px] border border-gray-300 placeholder-gray-500
+  text-gray-900 rounded-t-[10px] focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-[18px]
+}
+.my_button{
+  @apply  relative w-full flex justify-center px-[30px] py-[10px] border border-transparent text-[18px] font-medium rounded-[18px]
+  text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
 }
 </style>

@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import api from "@/api/found"
 import {Ref} from "vue";
+
 const {getSongSingleTable, getSongSingleList} = api
+
 interface ITag {
   category: number,
   hot: boolean,
@@ -9,12 +11,14 @@ interface ITag {
   name: string,
   type: number,
 }
-interface ISongListItem{
-  coverImgUrl:string,
-  id:number,
-  name:string,
-  copywriter:string,
+
+interface ISongListItem {
+  coverImgUrl: string,
+  id: number,
+  name: string,
+  copywriter: string,
 }
+
 //语种
 const languagesList: Ref<Array<ITag>> = ref([])
 //风格
@@ -54,8 +58,12 @@ const changeTagList = (tag: ITag) => {
   }
 }
 //获取展示列表
-const getSongListData = (cat:string, limit?:number, before?:string)=>{
-  getSongSingleList({cat, limit,before}).then((data: { code: number, playlists: Array<ISongListItem>,lasttime:string }) => {
+const getSongListData = (cat: string, limit?: number, before?: string) => {
+  getSongSingleList({
+    cat,
+    limit,
+    before
+  }).then((data: { code: number, playlists: Array<ISongListItem>, lasttime: string }) => {
     if (data.code === 200) {
       songList.value = data.playlists
       loadMoreTime.value = data.lasttime
@@ -71,13 +79,25 @@ const changeTypeStatus = (type: ITag) => {
   moreShow.value = true
   getSongListData(type.name, 25)
 }
+
+const bigTypeList: Ref<Array<{ type: string, list: Array<ITag> }>> = ref([
+  {type: "语种", list: languagesList},
+  {type: "风格", list: stylesList},
+  {type: "场景", list: scenariosList},
+  {type: "情感", list: emotionalList},
+  {type: "主题", list: themeList},
+])
 //加载更多
 const loadMore = () => {
-  getSongSingleList({cat:tagList.value.find(item => item.id === nowType.value)!.name, limit:25,before:loadMoreTime.value}).then((data: { code: number, playlists: Array<ISongListItem>,lasttime:string }) => {
+  getSongSingleList({
+    cat: tagList.value.find(item => item.id === nowType.value)!.name,
+    limit: 25,
+    before: loadMoreTime.value
+  }).then((data: { code: number, playlists: Array<ISongListItem>, lasttime: string }) => {
     if (data.code === 200) {
-      if(data.playlists.length===0){
+      if (data.playlists.length === 0) {
         ElMessage.warning("没有更多啦，选择其他的看看吧")
-      }else{
+      } else {
         songList.value = [...songList.value, ...data.playlists]
         loadMoreTime.value = data.lasttime
       }
@@ -104,89 +124,62 @@ const showPlayList = (id: number) => {
 </script>
 <template>
   <div class="w-full">
-    <div class="w-full h-[40px] md:h-[80px] text-3xl font-bold animate-bounce mt-1.5 truncate md:text-6xl">发现</div>
-    <div class="flex items-center justify-items-end h-auto">
+    <div class="w-full h-[60px] text-[40px] font-bold animate-bounce mt-0.5 truncate ">发现</div>
+    <div class="flex items-center justify-items-end h-auto flex-wrap">
       <div class="my_tag_css" :class="{'tag_checked':nowType===v.id}"
            v-for="v in tagList"
            @click="changeTypeStatus(v)">{{ v.name }}
       </div>
       <div class="my_tag_css" :class="{'tag_checked':!moreShow}" @click="moreShow = !moreShow;nowType=99999">更多</div>
     </div>
-    <div class="w-full mt-4 bg-[#f3f3f6] rounded-2xl py-4" :class="{'hidden':moreShow}">
-      <div class="my_text_left box-border px-4 mb-6">
-        <div class="font-bold text-2xl w-20">语种</div>
+    <div class="w-full mt-0.5 bg-[#f3f3f6] rounded-[10px] py-0.5" :class="{'hidden':moreShow}">
+      <div class="my_tag_box" v-for="v in bigTypeList" :key="v.type">
+        <div class="my_tag_title">{{ v.type }}</div>
         <div class="my_text_left flex-1 flex-wrap">
-          <div class="my_tag_css" :class="{'tag_checked':tagList.find(item=>item.id===v.id)}" @click="changeTagList(v)"
-               v-for="v in languagesList">{{ v.name }}
-          </div>
-        </div>
-      </div>
-      <div class="my_text_left box-border px-4 mb-6">
-        <div class="font-bold text-2xl w-20">风格</div>
-        <div class="my_text_left flex-1 flex-wrap">
-          <div class="my_tag_css" :class="{'tag_checked':tagList.find(item=>item.id===v.id)}" @click="changeTagList(v)"
-               v-for="v in stylesList">{{ v.name }}
-          </div>
-        </div>
-      </div>
-      <div class="my_text_left box-border px-4 mb-6">
-        <div class="font-bold text-2xl w-20">场景</div>
-        <div class="my_text_left flex-1 flex-wrap">
-          <div class="my_tag_css" :class="{'tag_checked':tagList.find(item=>item.id===v.id)}" @click="changeTagList(v)"
-               v-for="v in scenariosList">{{ v.name }}
-          </div>
-        </div>
-      </div>
-      <div class="my_text_left box-border px-4 mb-6">
-        <div class="font-bold text-2xl w-20">情感</div>
-        <div class="my_text_left flex-1 flex-wrap">
-          <div class="my_tag_css" :class="{'tag_checked':tagList.find(item=>item.id===v.id)}" @click="changeTagList(v)"
-               v-for="v in emotionalList">{{ v.name }}
-          </div>
-        </div>
-      </div>
-      <div class="my_text_left box-border px-4 mb-6">
-        <div class="font-bold text-2xl w-20">主题</div>
-        <div class="my_text_left flex-1 flex-wrap">
-          <div class="my_tag_css" :class="{'tag_checked':tagList.find(item=>item.id===v.id)}" @click="changeTagList(v)"
-               v-for="v in themeList">{{ v.name }}
+          <div class="my_tag_css" :class="{'tag_checked':tagList.find(item=>item.id===val.id)}"
+               @click="changeTagList(val)"
+               v-for="val in v.list" :key="val.id">{{ val.name }}
           </div>
         </div>
       </div>
     </div>
-    <div class="w-full h-auto flex flex-wrap justify-around mt-8">
-      <div v-for="v in songList" :key="v.id" class="w-72 h-84 box-border p-2 relative">
-        <img :src="v.coverImgUrl" alt="" class="w-full rounded-2xl hover:shadow-2xl cursor-pointer mx-auto">
-        <p class="text-left p-1 mt-0.5 h-12 overflow-hidden font-bold">{{ v.name }}</p>
-        <p class="text-left p-1 mt-0.5 text-sm text-gray-400 ">{{ v.copywriter }}</p>
-        <div class="cover absolute w-full h-3/4 bg-clip-text top-0 left-0 opacity-0">
-          <div class="h-full relative">
-            <div class="player_icon w-12 h-12 m-auto top-0 bottom-0 left-0 right-0 absolute"
-                 @click="showPlayList(v.id)">
-              <svg viewBox="0 0 1024 1024"
-                   xmlns="http://www.w3.org/2000/svg" data-v-ba633cb8="">
-                <path fill="currentColor"
-                      d="M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896zm0 832a384 384 0 0 0 0-768 384 384 0 0 0 0 768zm-48-247.616L668.608 512 464 375.616v272.768zm10.624-342.656 249.472 166.336a48 48 0 0 1 0 79.872L474.624 718.272A48 48 0 0 1 400 678.336V345.6a48 48 0 0 1 74.624-39.936z"></path>
-              </svg>
+    <div class="w-full h-auto flex flex-wrap justify-around mt-1">
+      <div v-for="v in songList" :key="v.id" class="lg:w-1/6 w-[150px] box-border p-0.5 ">
+        <div class="relative">
+          <img :src="v.coverImgUrl" alt="" class="w-full rounded-1xl hover:shadow-2xl cursor-pointer mx-auto">
+          <div class="cover absolute my_xy_full bg-clip-text top-0 left-0 opacity-0">
+            <div class="h-full relative">
+              <div class="player_icon w-2 h-2 m-auto top-0 bottom-0 left-0 right-0 absolute"
+                   @click="showPlayList(v.id)">
+                <svg viewBox="0 0 1024 1024"
+                     xmlns="http://www.w3.org/2000/svg" data-v-ba633cb8="">
+                  <path fill="currentColor"
+                        d="M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896zm0 832a384 384 0 0 0 0-768 384 384 0 0 0 0 768zm-48-247.616L668.608 512 464 375.616v272.768zm10.624-342.656 249.472 166.336a48 48 0 0 1 0 79.872L474.624 718.272A48 48 0 0 1 400 678.336V345.6a48 48 0 0 1 74.624-39.936z"></path>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
+        <p class="text-left  mt-[10px] text-[18px]  overflow-ellipsis font-bold">{{ v.name }}</p>
+        <p class="text-left mt-[10px] text-[16px] text-gray-400 overflow-ellipsis">{{ v.copywriter }}</p>
       </div>
-      <div class="w-72 h-0" v-for="i in 8" :key="i"></div>
+      <div class="lg:w-1/6 w-[150px] box-border p-0.5 relative" v-for="i in 8" :key="i"></div>
     </div>
-    <div class="h-24 my_text_center">
-      <div class="text-2xl font-bold bg-[#f1f1f5] p-2 rounded-3xl px-4 cursor-pointer" @click="loadMore">加载更多</div>
+    <div class="h-3 my_text_center">
+      <div class="text-[25px] font-bold bg-[#f1f1f5] p-0.5 rounded-3xl px-1.5 cursor-pointer" @click="loadMore">加载更多
+      </div>
     </div>
   </div>
 </template>
 <style lang="scss" scoped>
 .my_tag_css {
-  @apply transition-all box-border hover:font-bold hover:bg-[#e7edfd] hover:text-[#2d53e7] text-[#6f6f70] rounded-2xl px-3 h-8 flex items-center justify-center m-1.5 cursor-pointer bg-[#f3f3f6] shadow-sm shadow-[#f3f3f6]
+  @apply text-[18px] transition-all box-border hover:font-bold hover:bg-[#e7edfd] hover:text-[#2d53e7] text-[#6f6f70] rounded-2xl px-1 h-1.5 flex items-center justify-center m-0.5 cursor-pointer bg-[#f3f3f6] shadow-sm shadow-[#f3f3f6]
 }
 
 .tag_checked {
   @apply bg-[#e7edfd] font-bold text-[#2d53e7]
 }
+
 .cover {
   &:hover {
     opacity: 1;
@@ -194,4 +187,11 @@ const showPlayList = (id: number) => {
   }
 }
 
+.my_tag_box {
+  @apply my_text_left box-border px-1 mb-0.5
+}
+
+.my_tag_title {
+  @apply font-bold text-[30px] w-[0.85rem]
+}
 </style>

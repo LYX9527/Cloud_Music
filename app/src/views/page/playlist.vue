@@ -52,7 +52,7 @@ const playListData: Ref<{
   description: ''
 })
 //歌单中歌曲详情列表
-const songsListData:Ref<Array<{
+const songsListData: Ref<Array<{
   id: string,
   name: string,
   dt: number,
@@ -64,6 +64,7 @@ const songsListData:Ref<Array<{
     name: string
   }>,
 }>> = ref([])
+
 //歌单评论列表数据
 interface IComment {
   comments: Array<{
@@ -78,7 +79,8 @@ interface IComment {
   total: number,
   code?: number
 }
-const commentListData:Ref<IComment> = ref({
+
+const commentListData: Ref<IComment> = ref({
   comments: [],
   total: 0,
 })
@@ -126,36 +128,29 @@ const playMusicForId = (info: { [key: string]: any }) => {
 }
 </script>
 <template>
-  <div class="h-80 flex flex-nowrap">
-    <div class="w-1/4 relative">
-      <img class="rounded-3xl w-80 m-auto absolute top-0 left-0 right-0 bottom-0" :src="playListData.coverImgUrl"
+  <div class="h-[300px] flex flex-nowrap">
+    <div class="w-[300px] relative">
+      <img class="rounded-[20px] w-[300px] m-auto absolute top-0 left-0 right-0 bottom-0 hover:shadow-amber-100" :src="playListData.coverImgUrl"
            alt="">
     </div>
-    <div class="w-3/4 h-full pl-4 box-border">
-      <div class="h-1/6 flex items-center font-bold text-4xl">{{ playListData.name }}</div>
-      <div class=" flex items-center h-1/6 text-xl">Playlist by &nbsp; <span
+    <div class="flex-1 h-full pl-[20px] box-border">
+      <div class="truncate h-1/6 flex items-center font-bold text-[28px]">{{ playListData.name }}</div>
+      <div class="truncate flex items-center h-1/6 text-[22px]">Playlist by &nbsp; <span
           class="hover:underline cursor-pointer"> {{ playListData?.creator?.nickname }}</span></div>
-      <div class="h-1/6 text-sm text-gray-400">最后更新于{{ dataFormat(new Date(playListData.updateTime), 'YYYY年MM月DD日') }} ·
+      <div class="truncate h-[40px] text-[13px] text-gray-400">最后更新于{{ dataFormat(new Date(playListData.updateTime), 'YYYY年MM月DD日') }} ·
         {{ playListData.trackCount }} 首歌
       </div>
-      <div class=" flex items-center h-1/6 text-sm text-gray-400">{{ playListData.description }}</div>
-      <div class="h-1/3 flex">
-        <div
-            class="mt-8 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 mx-1.5 cursor-pointer h-10 leading-6 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-          播放
-        </div>
-        <div
-            class="mt-8 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 mx-1.5 cursor-pointer h-10 leading-6 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-          收藏
-        </div>
-        <div
-            class="mt-8 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 mx-1.5 cursor-pointer h-10 leading-6 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-          其他
-        </div>
+      <div class="flex items-center h-1/6 text-[12px] text-gray-400 multilineText py-[5px]">
+          {{ playListData.description }}
+      </div>
+      <div class="h-1/3 my_text_left pt-2.5">
+        <div class="my_ctrl_btn">播放</div>
+        <div class="my_ctrl_btn">收藏</div>
+        <div class="my_ctrl_btn">其他</div>
       </div>
     </div>
   </div>
-  <div class="h-auto py-4">
+  <div class="h-auto py-0.5">
     <el-tabs
         v-model="activeName"
         type="card"
@@ -164,17 +159,21 @@ const playMusicForId = (info: { [key: string]: any }) => {
     >
       <el-tab-pane label="歌曲列表" name="first">
         <div v-for="v in songsListData" :key="v.id"
-             class="relative flex flex-wrap h-16 p-2 hover:bg-blue-200 rounded-xl cursor-pointer px-4"
+             class="relative flex flex-wrap  h-[84px] p-0.5 hover:bg-blue-200 rounded-sm cursor-pointer  my_text_between"
              @dblclick="playMusicForId(v)">
-          <img class="w-12 h-12 rounded-xl" :src="v.al.picUrl" alt="">
-          <div class="absolute left-24 flex-wrap w-36 flex h-full leading-8">
-            <div class="w-full h-1/2 truncate">{{ v.name }}</div>
-            <div class="w-full h-1/2 text-sm text-gray-400">{{ v.ar[0].name }}</div>
+          <div class="flex-wrap  flex h-full">
+            <div>
+              <img class="w-2 h-2 rounded-[10px]" :src="v.al.picUrl" alt="">
+            </div>
+            <div class="ml-[25px]">
+              <div class="my_text_left w-full h-1/2 truncate">{{ v.name }}</div>
+              <div class="my_text_left w-full h-1/2 text-[14px]] truncate text-gray-400">{{ v.ar[0].name }}</div>
+            </div>
           </div>
-          <div class="absolute left-0 right-0 mx-auto flex items-center w-36 h-full top-0 overflow-y-hidden leading-8">
+          <div class="my_text_left w-5 h-full overflow-y-hidden absolute left-[44%]">
             {{ v.al.name }}
           </div>
-          <div class="flex items-center absolute right-12 flex-wrap w-36  h-full top-0">
+          <div class="flex items-center flex-wrap w-5 my_text_center h-full">
             {{
               ("00" + Math.floor(Math.floor(v.dt / 1000) / 60)).slice(-2)
             }}:{{ ("00" + Math.floor(v.dt / 1000) % 60).slice(-2) }}
@@ -182,17 +181,19 @@ const playMusicForId = (info: { [key: string]: any }) => {
         </div>
       </el-tab-pane>
       <el-tab-pane :label="'歌曲评论('+commentListData.total+')'" name="second">
-        <div v-for="v in commentListData.comments" class="flex">
-          <img :src="v.user.avatarUrl" alt="" class="w-12 h-12 rounded-full mx-2.5">
-          <div class="flex-1">
-            {{ v.user.nickname }}:{{ v.content }}
+        <div v-for="v in commentListData.comments" class="flex my-0.5 hover:bg-blue-200 rounded-[20px]">
+          <img :src="v.user.avatarUrl" alt="" class="w-1.5 h-1.5 rounded-full m-0.5">
+          <div class="flex-1 py-0.5  box-border">
+            <span class="text-[14px] text-[#aaff]">{{ v.user.nickname }}</span>: <span class=" max-h-[77px] ml-[10px]">{{ v.content }}</span>
           </div>
-          <div>{{ dataFormat(new Date(v.time), 'YYYY年MM月DD日 HH:mm:ss') }}</div>
+          <div class="my_text_center p-0.5">{{ dataFormat(new Date(v.time), 'YYYY年MM月DD日 HH:mm:ss') }}</div>
         </div>
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <style lang="scss" scoped>
-
+.my_ctrl_btn {
+  @apply mt-0.5 my_text_center overflow-ellipsis transition duration-500 ease-in-out transform hover:-translate-y-[1px] hover:scale-110 mx-0.5 cursor-pointer h-1.5  inline-flex justify-center  px-1 border border-transparent shadow-sm text-[14px] font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700
+}
 </style>
