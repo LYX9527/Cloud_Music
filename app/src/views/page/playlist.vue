@@ -163,7 +163,7 @@ const playMusicForId = (info: { [key: string]: any }) => {
         <div v-for="(v,i) in songsListData" :key="v.id"
              class="relative flex flex-wrap h-[84px] p-0.5 hover:bg-blue-200 rounded-sm cursor-pointer  my_text_between"
              @dblclick="playMusicForId(v)"
-             :class="{'bg-gray-100':i&1===1}">
+             :class="{'bg-gray-100':(i&1)===1}">
           <div class="flex-wrap  flex h-full">
             <div>
               <img class="w-2 h-2 rounded-[10px]" :src="v.al.picUrl" alt="">
@@ -185,7 +185,7 @@ const playMusicForId = (info: { [key: string]: any }) => {
       </el-tab-pane>
       <el-tab-pane :label="'歌曲评论('+commentListData.total+')'" name="second">
         <div v-for="(v,i) in commentListData.comments" class="flex my-0.5 hover:bg-blue-200 rounded-[12px]" :key="i"
-             :class="{'bg-gray-100':i&1===1}">
+             :class="{'bg-gray-100':(i&1)===1}">
           <img :src="v.user.avatarUrl" alt="" class="w-1.5 h-1.5 rounded-full m-0.5">
           <div class="flex-1 py-0.5  box-border">
             <span class="text-[14px] text-[#aaff]">{{ v.user.nickname }}</span>: <span class=" max-h-[77px] ml-[10px]">{{
