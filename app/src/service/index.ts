@@ -6,8 +6,8 @@ import cache from './cache'
 
 axios.defaults.withCredentials = true;
 const service = axios.create({
-    baseURL: "http://124.223.203.125:11222/",
-    // baseURL: "https://cloud-music-api-indol.vercel.app/",
+    // baseURL: "http://124.223.203.125:11222/",
+    baseURL: "https://cloud-music-api-indol.vercel.app/",
     timeout: 10000
 })
 // request拦截器
