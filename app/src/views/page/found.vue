@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import api from "@/api/found"
 import {Ref} from "vue";
-
+import * as NProgress from "nprogress";
 const {getSongSingleTable, getSongSingleList} = api
 
 interface ITag {
@@ -77,7 +77,7 @@ const getSongListData = (cat: string, limit?: number, before?: string) => {
 const changeTypeStatus = (type: ITag) => {
   nowType.value = type.id
   moreShow.value = true
-  getSongListData(type.name, 25)
+  getSongListData(type.name, 12)
 }
 
 const bigTypeList: Ref<Array<{ type: string, list: Array<ITag> }>> = ref([
@@ -91,7 +91,7 @@ const bigTypeList: Ref<Array<{ type: string, list: Array<ITag> }>> = ref([
 const loadMore = () => {
   getSongSingleList({
     cat: tagList.value.find(item => item.id === nowType.value)!.name,
-    limit: 25,
+    limit: 12,
     before: loadMoreTime.value
   }).then((data: { code: number, playlists: Array<ISongListItem>, lasttime: string }) => {
     if (data.code === 200) {
@@ -105,6 +105,7 @@ const loadMore = () => {
   })
 }
 onMounted(() => {
+  NProgress.start();
   getSongSingleTable().then((res: { code: number, tags: Array<ITag> }) => {
     languagesList.value = res.tags.filter(item => item.category === 0);
     stylesList.value = res.tags.filter(item => item.category === 1);
@@ -112,7 +113,8 @@ onMounted(() => {
     emotionalList.value = res.tags.filter(item => item.category === 3);
     themeList.value = res.tags.filter(item => item.category === 4);
   })
-  getSongListData("全部", 25)
+  getSongListData("全部", 12)
+  NProgress.done();
 })
 const router = useRouter()
 const showPlayList = (id: number) => {

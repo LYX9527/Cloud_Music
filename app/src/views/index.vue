@@ -310,7 +310,11 @@ const showPlayList = (id: string) => {
               <b-icon-skip-forward-fill @click="nextMusic" class="my_ctrl_icon"/>
             </div>
             <div class="h-1/2 w-full my_text_around">
-              <div class="my_time_step">00:00</div>
+              <div class="my_time_step">
+                {{ ("00" + Math.floor(musicProgress / 60)).slice(-2) }}:{{
+                  ("00" + Math.floor(musicProgress) % 60).slice(-2)
+                }}
+              </div>
               <div class="flex items-center h-full w-[90%] ml-1.5 mr-0.5">
                 <el-slider @change="changeProgress" v-model="musicProgress" :step="1" size='small'
                            class="h-full w-full " :show-tooltip="false"

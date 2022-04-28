@@ -42,7 +42,7 @@ export default {
      * @param offset 偏移数量，用于分页 , 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
      * @param area ALL:全部,ZH:华语,EA:欧美,KR:韩国,JP:日本
      */
-    getNewAlbum(params: { limit?: number, offset?: string, area?: string }) {
+    getNewAlbum(params: { limit?: number, offset?: string|number, area?: string }) {
         return request({
             url: '/album/new',
             method: "get",
@@ -86,7 +86,7 @@ export default {
      * 获取用户歌单
      * @param uid 用户id string
      */
-    getUserPlayList(params: { uid: string,limit?: number, offset?: number }) {
+    getUserPlayList(params: { uid: string, limit?: number, offset?: number }) {
         return request({
             url: '/user/playlist',
             method: "get",
@@ -99,7 +99,7 @@ export default {
      * @param limit 返回数量 , 默认为 20
      * @param offset 偏移数量，用于分页 , 如 :( 页数 -1)*20, 其中 20 为 limit 的值 , 默认为 0
      */
-    getPlayListComment(params: { id: string, limit?: number, offset?: number }):Promise<any> {
+    getPlayListComment(params: { id: string, limit?: number, offset?: number }): Promise<any> {
         return request({
             url: '/comment/playlist',
             method: "get",

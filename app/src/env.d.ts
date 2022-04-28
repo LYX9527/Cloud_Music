@@ -8,3 +8,4 @@ declare module "@/service"{
   const component:AxiosInstance
   export default component
 }
+declare module "nprogress"

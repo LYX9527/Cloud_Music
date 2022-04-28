@@ -8,5 +8,6 @@ import 'element-plus/dist/index.css'
 import 'animate.css';
 import "./assets/utils/flexlble.js"
 import './index.css'
-
-createApp(App).use(store).use(router).use(BootstrapIconsPlugin).use(ElementPlus).mount('#app')
+import 'nprogress/nprogress.css'
+import directive from '@/directive/index'
+createApp(App).use(store).use(router).use(BootstrapIconsPlugin).use(ElementPlus).use(directive).mount('#app')

@@ -1,23 +1,27 @@
 <script lang="ts" setup>
 import api from "@/api/banner";
 import router from "@/router";
-import {Ref} from "vue";
+import * as NProgress from "nprogress";
 
 const {getBanner, getRecommendList, getAllTop, getNewAlbum} = api
 onMounted(() => {
+  NProgress.start();
   getBannerData()
-  getRecommendListData()
+  getRecommendListData(12)
   getAllTopList()
-  getNewAlbumData()
+  getNewAlbumData(12)
+  NProgress.done();
 })
 //轮播图列表
-const bannerList: Ref<Array<{ encodeId: string, imageUrl: string }>> = ref([] as Array<any>);
+const bannerList: Ref<Array<{ encodeId: string, imageUrl: string }>> = ref([]);
 //热门推荐歌单
-const recommendList: Ref<Array<{ copywriter: string, name: string, picUrl: string, id: string }>> = ref([] as any[]);
+const recommendList: Ref<Array<{ copywriter: string, name: string, picUrl: string, id: string }>> = ref([]);
 //排行榜列表
-const topList: Ref<Array<{ coverImgUrl: string, name: string, updateFrequency: string, id: string }>> = ref([] as any[]);
+const topList: Ref<Array<{ coverImgUrl: string, name: string, updateFrequency: string, id: string }>> = ref([]);
 //新专速递列表
-const newAlbumList: Ref<Array<{ subType: string, name: string, picUrl: string, id: string }>> = ref([] as any[])
+const newAlbumList: Ref<Array<{ subType: string, name: string, picUrl: string, id: string }>> = ref([])
+//当前新专速递偏移量
+const nowAlbumOffset: Ref<number> = ref(0)
 //获取轮播图数据
 const getBannerData = () => {
   getBanner({type: 0}).then((data: { [key: string]: any }) => {
@@ -27,26 +31,26 @@ const getBannerData = () => {
   })
 }
 //获取全部榜单
-const getAllTopList = () => {
+const getAllTopList = (num?: number) => {
   getAllTop().then((data: { [key: string]: any }) => {
     if (data.code == 200) {
-      topList.value = data.list
+      topList.value = data.list.slice(0, num || 12)
     }
   })
 }
 //获取推荐歌单列表
-const getRecommendListData = () => {
-  getRecommendList({}).then((data: { [key: string]: any }) => {
+const getRecommendListData = (limit?: number,) => {
+  getRecommendList({limit}).then((data: { [key: string]: any }) => {
     if (data.code == 200) {
       recommendList.value = data.result
     }
   })
 }
 //获取新歌速递
-const getNewAlbumData = () => {
-  getNewAlbum({}).then((data: { [key: string]: any }) => {
+const getNewAlbumData = (limit?: number, offset?: number) => {
+  getNewAlbum({limit, offset: offset || nowAlbumOffset.value*12}).then((data: { [key: string]: any }) => {
     if (data.code == 200) {
-      newAlbumList.value = data.albums
+      newAlbumList.value = [...newAlbumList.value, ...data.albums]
     }
   })
 }
@@ -67,11 +71,12 @@ const showPlayList = (id: string) => {
       </div>
     </el-carousel-item>
   </el-carousel>
-  <div class="w-full h-5 font-bold text-[36px] flex 2xl:items-center">推荐歌单</div>
-  <div class="w-full h-auto flex flex-wrap justify-around">
+  <div class="music_list_title">推荐歌单<span class="music_list_side_ctl" @click="getRecommendListData(99)">显示全部</span>
+  </div>
+  <div class="music_list_content">
     <div v-for="v in recommendList" :key="v.id" class="lg:w-1/6 w-[150px] box-border p-0.5">
       <div class="relative">
-        <img :src="v.picUrl" alt="" class="w-full rounded-[20px] hover:shadow-2xl cursor-pointer mx-auto">
+        <img v-imgLazy="v.picUrl" alt="" class="w-full rounded-[20px] hover:shadow-2xl cursor-pointer mx-auto">
         <div class="cover absolute my_xy_full bg-clip-text top-0 left-0 opacity-0">
           <div class="h-full relative">
             <div class="player_icon w-2 h-2 m-auto top-0 bottom-0 left-0 right-0 absolute" @click="showPlayList(v.id)">
@@ -89,11 +94,12 @@ const showPlayList = (id: string) => {
     </div>
     <div class="lg:w-1/6 w-[150px] box-border p-0.5 relative" v-for="i in 8" :key="i"></div>
   </div>
-  <div class="w-full h-5 font-bold text-[36px] flex 2xl:items-center">排行榜</div>
-  <div class="w-full h-auto flex flex-wrap justify-around">
+  <div class="music_list_title">排行榜
+    <span class="music_list_side_ctl" @click="getAllTopList(99)">显示全部</span></div>
+  <div class="music_list_content">
     <div v-for="v in topList" :key="v.id" class="lg:w-1/6 w-[150px] box-border p-0.5 ">
       <div class="relative">
-        <img :src="v.coverImgUrl" alt="" class="w-full rounded-[20px] hover:shadow-2xl cursor-pointer mx-auto">
+        <img v-imgLazy="v.coverImgUrl" alt="" class="w-full rounded-[20px] hover:shadow-2xl cursor-pointer mx-auto">
         <div class="cover absolute my_xy_full bg-clip-text top-0 left-0 opacity-0">
           <div class="h-full relative">
             <div class="player_icon w-2 h-2 m-auto top-0 bottom-0 left-0 right-0 absolute">
@@ -111,11 +117,11 @@ const showPlayList = (id: string) => {
     </div>
     <div class="lg:w-1/6 w-[150px] box-border p-0.5 relative" v-for="i in 8" :key="i"></div>
   </div>
-  <div class="w-full h-5 font-bold text-[36px] flex 2xl:items-center">新专速递</div>
-  <div class="w-full h-auto flex flex-wrap justify-around">
+  <div class="music_list_title">新专速递</div>
+  <div class="music_list_content">
     <div v-for="v in newAlbumList" :key="v.id" class="lg:w-1/6 w-[150px] box-border p-0.5 ">
       <div class="relative">
-        <img :src="v.picUrl" alt="" class="w-full rounded-[20px] hover:shadow-2xl cursor-pointer mx-auto">
+        <img v-imgLazy="v.picUrl" alt="" class="w-full rounded-[20px] hover:shadow-2xl cursor-pointer mx-auto">
         <div class="cover absolute my_xy_full bg-clip-text top-0 left-0 opacity-0">
           <div class="h-full relative">
             <div class="player_icon w-2 h-2 m-auto top-0 bottom-0 left-0 right-0 absolute">
@@ -133,6 +139,10 @@ const showPlayList = (id: string) => {
     </div>
     <div class="lg:w-1/6 w-[150px] box-border p-0.5 relative" v-for="i in 8" :key="i"></div>
   </div>
+  <div class="h-3 my_text_center">
+    <div class="text-[25px] font-bold bg-[#f1f1f5] p-0.5 rounded-3xl px-1.5 cursor-pointer" @click="getNewAlbumData(12,++nowAlbumOffset*12)">加载更多
+    </div>
+  </div>
 </template>
 <style lang="scss" scoped>
 .cover {
@@ -140,5 +150,17 @@ const showPlayList = (id: string) => {
     opacity: 1;
     transition: all .8s;
   }
+}
+
+.music_list_title {
+  @apply w-full h-5 font-bold text-[36px] flex 2xl:items-center relative py-1 px-0.5;
+}
+
+.music_list_content {
+  @apply w-full h-auto flex flex-wrap justify-around
+}
+
+.music_list_side_ctl {
+  @apply absolute right-0.5 text-[18px] cursor-pointer hover:underline;
 }
 </style>

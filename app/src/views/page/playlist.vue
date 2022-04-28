@@ -130,18 +130,20 @@ const playMusicForId = (info: { [key: string]: any }) => {
 <template>
   <div class="h-[300px] flex flex-nowrap">
     <div class="w-[300px] relative">
-      <img class="rounded-[20px] w-[300px] m-auto absolute top-0 left-0 right-0 bottom-0 hover:shadow-amber-100" :src="playListData.coverImgUrl"
+      <img class="rounded-[20px] w-[300px] m-auto absolute top-0 left-0 right-0 bottom-0 hover:shadow-amber-100"
+           :src="playListData.coverImgUrl"
            alt="">
     </div>
     <div class="flex-1 h-full pl-[20px] box-border">
       <div class="truncate h-1/6 flex items-center font-bold text-[28px]">{{ playListData.name }}</div>
       <div class="truncate flex items-center h-1/6 text-[22px]">Playlist by &nbsp; <span
           class="hover:underline cursor-pointer"> {{ playListData?.creator?.nickname }}</span></div>
-      <div class="truncate h-[40px] text-[13px] text-gray-400">最后更新于{{ dataFormat(new Date(playListData.updateTime), 'YYYY年MM月DD日') }} ·
+      <div class="truncate h-[40px] text-[13px] text-gray-400">
+        最后更新于{{ dataFormat(new Date(playListData.updateTime), 'YYYY年MM月DD日') }} ·
         {{ playListData.trackCount }} 首歌
       </div>
       <div class="flex items-center h-1/6 text-[12px] text-gray-400 multilineText py-[5px]">
-          {{ playListData.description }}
+        {{ playListData.description }}
       </div>
       <div class="h-1/3 my_text_left pt-2.5">
         <div class="my_ctrl_btn">播放</div>
@@ -158,9 +160,10 @@ const playMusicForId = (info: { [key: string]: any }) => {
         @tab-click="handleClick"
     >
       <el-tab-pane label="歌曲列表" name="first">
-        <div v-for="v in songsListData" :key="v.id"
-             class="relative flex flex-wrap  h-[84px] p-0.5 hover:bg-blue-200 rounded-sm cursor-pointer  my_text_between"
-             @dblclick="playMusicForId(v)">
+        <div v-for="(v,i) in songsListData" :key="v.id"
+             class="relative flex flex-wrap h-[84px] p-0.5 hover:bg-blue-200 rounded-sm cursor-pointer  my_text_between"
+             @dblclick="playMusicForId(v)"
+             :class="{'bg-gray-100':i&1===1}">
           <div class="flex-wrap  flex h-full">
             <div>
               <img class="w-2 h-2 rounded-[10px]" :src="v.al.picUrl" alt="">
@@ -181,10 +184,13 @@ const playMusicForId = (info: { [key: string]: any }) => {
         </div>
       </el-tab-pane>
       <el-tab-pane :label="'歌曲评论('+commentListData.total+')'" name="second">
-        <div v-for="v in commentListData.comments" class="flex my-0.5 hover:bg-blue-200 rounded-[20px]">
+        <div v-for="(v,i) in commentListData.comments" class="flex my-0.5 hover:bg-blue-200 rounded-[12px]" :key="i"
+             :class="{'bg-gray-100':i&1===1}">
           <img :src="v.user.avatarUrl" alt="" class="w-1.5 h-1.5 rounded-full m-0.5">
           <div class="flex-1 py-0.5  box-border">
-            <span class="text-[14px] text-[#aaff]">{{ v.user.nickname }}</span>: <span class=" max-h-[77px] ml-[10px]">{{ v.content }}</span>
+            <span class="text-[14px] text-[#aaff]">{{ v.user.nickname }}</span>: <span class=" max-h-[77px] ml-[10px]">{{
+              v.content
+            }}</span>
           </div>
           <div class="my_text_center p-0.5">{{ dataFormat(new Date(v.time), 'YYYY年MM月DD日 HH:mm:ss') }}</div>
         </div>
