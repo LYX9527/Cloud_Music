@@ -99,7 +99,7 @@ export default {
      * @param limit 返回数量 , 默认为 20
      * @param offset 偏移数量，用于分页 , 如 :( 页数 -1)*20, 其中 20 为 limit 的值 , 默认为 0
      */
-    getPlayListComment(params: { id: string, limit?: number, offset?: number }) {
+    getPlayListComment(params: { id: string, limit?: number, offset?: number }):Promise<any> {
         return request({
             url: '/comment/playlist',
             method: "get",
