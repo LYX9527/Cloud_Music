@@ -7,7 +7,9 @@ import path from 'path'
 export default defineConfig({
     base:process.env.NODE_ENV === 'production' ? '/' : './',
     plugins: [
-        vue(),
+        vue({
+            reactivityTransform: true
+        }),
         AutoImport({
             //引入element plus自动api支持
             resolvers: [ElementPlusResolver()],

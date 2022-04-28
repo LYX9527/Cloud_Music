@@ -208,19 +208,20 @@ const showPlayList = (id: string) => {
 <template>
   <div class="common-layout my_xy_full">
     <el-container class="my_xy_full">
-      <el-aside :style="{width:`${sidebarWidth}px`}">
-        <div class="w-full h-16 font-bold text-2xl text-center leading-12">我的歌单</div>
+      <el-aside :style="{width:`${sidebarWidth}px`}" class="animate__animated "
+                :class="{'animate__zoomOutLeft':!sidebarWidth,'animate__zoomInLeft':sidebarWidth}">
+        <div class="w-full h-2 font-bold text-[28px] text-center leading-[.5rem]">我的歌单</div>
         <div class="song_list_title">我创建的歌单</div>
         <div v-for="v in userCreatePlayListData" :key="v.id" class="song_list"
              @click="showPlayList(v.id)">
-          <img :src="v.coverImgUrl" alt="" class="w-12 h-12">
-          <span class="text-sm flex-1 py-2 px-1">{{ v.name }}</span>
+          <img :src="v.coverImgUrl" alt="" class="w-2 h-2">
+          <span class="text-[16px] flex-1  px-1">{{ v.name }}</span>
         </div>
         <div class="song_list_title">我收藏的歌单</div>
         <div v-for="v in userCollectionPlayListData" :key="v.id" class="song_list"
              @click="showPlayList(v.id)">
-          <img :src="v.coverImgUrl" alt="" class="w-12 h-12">
-          <span class="text-sm flex-1 py-2 px-1">{{ v.name }}</span>
+          <img :src="v.coverImgUrl" alt="" class="w-2 h-2">
+          <span class="text-[16px] flex-1  px-1">{{ v.name }}</span>
         </div>
       </el-aside>
       <el-container>
@@ -249,7 +250,7 @@ const showPlayList = (id: string) => {
               <span>音乐库</span>
             </div>
             <div class="h_login w-1/4">
-              <img src="@/assets/header_defult.jpg"  alt="" class="w-1.5" @click="alertLogin">
+              <img src="@/assets/header_defult.jpg" alt="" class="w-1.5" @click="alertLogin">
             </div>
           </div>
         </el-header>
@@ -259,7 +260,8 @@ const showPlayList = (id: string) => {
               <div class="w-full h-2 font-bold text-[24px] flex my_text_left">正在播放</div>
               <div
                   class="h-3 box-border px-0.5 my_text_between hover:bg-blue-300 rounded-[10px] relative  cursor-pointer ">
-                <img class="w-2.5 h-2.5 rounded-[10px]" v-if="musicInfo.picUrl===''" src="@/assets/netease-music.png" alt="">
+                <img class="w-2.5 h-2.5 rounded-[10px]" v-if="musicInfo.picUrl===''" src="@/assets/netease-music.png"
+                     alt="">
                 <img class="w-2.5 h-2.5 rounded-[10px]" v-else :src="musicInfo.picUrl" alt="">
                 <div class="flex-wrap w-8 flex h-full flex-1">
                   <div class="my_text_center w-full h-1/2 truncate">{{ musicInfo.name }}</div>
@@ -439,10 +441,10 @@ const showPlayList = (id: string) => {
 }
 
 .song_list_title {
-  @apply px-2 h-12 font-bold my_text_left
+  @apply px-[8px] h-1.5 font-bold my_text_left
 }
 
 .song_list {
-  @apply px-2 flex cursor-pointer py-1 hover:bg-blue-300
+  @apply px-[8px] flex cursor-pointer py-[8px] hover:bg-blue-300
 }
 </style>

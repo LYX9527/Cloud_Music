@@ -5,11 +5,7 @@ module.exports = {
   ],
   // prefix:"tw-",
   theme: {
-    extend: {
-      lineHeight: {
-        '12': '4rem',
-      },
-    },
+    extend: {},
   },
   variants: {
     extend: {},

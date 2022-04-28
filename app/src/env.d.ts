@@ -4,6 +4,7 @@ declare module '*.vue' {
   export default component
 }
 declare module "@/service"{
-  const component:Function
+  import {AxiosInstance} from "axios";
+  const component:AxiosInstance
   export default component
 }

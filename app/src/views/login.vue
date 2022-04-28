@@ -50,7 +50,7 @@ const QcLogin = async () => {
       loginQc.value = data.data.qrimg
     })
     timer = setInterval(() => {
-      getQrCodeStatus({key, date: Date.now()}).then((data: { code: number, cookie: string, nickname: string }) => {
+      getQrCodeStatus({key, date: Date.now()}).then((data:{code:number,nickname:string,cookie:string})=> {
         if (data.code === 800) {
           alert('二维码已过期,请重新获取')
           clearInterval(timer)

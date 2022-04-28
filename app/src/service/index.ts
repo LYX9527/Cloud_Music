@@ -1,14 +1,13 @@
 import axios from 'axios'
 import {ElNotification, ElMessage} from 'element-plus'
-import errorCode from '@/service/errorCode'
-import {tansParams} from '@/service/ruoyi'
-import cache from '@/service/cache'
+import errorCode, {ErrorCode, NormalCode} from './errorCode'
+import {tansParams} from './param'
+import cache from './cache'
 
-axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 axios.defaults.withCredentials = true;
 const service = axios.create({
-    // baseURL: "http://124.223.203.125:11222/",
-    baseURL: "https://cloud-music-api-indol.vercel.app/",
+    baseURL: "http://124.223.203.125:11222/",
+    // baseURL: "https://cloud-music-api-indol.vercel.app/",
     timeout: 10000
 })
 // request拦截器
@@ -52,9 +51,9 @@ service.interceptors.request.use(config => {
 // 响应拦截器
 service.interceptors.response.use(res => {
         // 未设置状态码则默认成功状态
-        const code = res.data.code || 200;
+        const code: ErrorCode | NormalCode = res.data.code || 200;
         // 获取错误信息
-        const msg = errorCode[code] || res.data.msg || errorCode['default']
+        const msg: string = errorCode[code] || res.data.msg || errorCode['default']
         // 二进制数据则直接返回
         if (res.request.responseType === 'blob' || res.request.responseType === 'arraybuffer') {
             return res.data

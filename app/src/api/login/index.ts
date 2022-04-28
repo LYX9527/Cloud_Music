@@ -30,7 +30,7 @@ export default {
      * @param key 扫码登录key string
      * @param date 当前时间戳 Date.now()获取 string
      */
-    getQrCodeStatus(params: { key: string, date: string | number }) {
+    getQrCodeStatus(params: { key: string, date: string | number }): Promise<any> {
         return request({
             url: "/login/qr/check",
             method: 'get',
@@ -54,7 +54,7 @@ export default {
      * @param phone 手机号 string
      * @param password 密码 string
      */
-    phoneLogin(params: { phone: string | number, password?: string, captcha?: string }) {
+    phoneLogin(params: { phone: string | number, password?: string, captcha?: string }): Promise<any> {
         return request({
             url: '/login/cellphone',
             method: "get",
@@ -77,7 +77,7 @@ export default {
      * @param email 邮箱 string
      * @param password 密码 string
      */
-    emailLogin(params: { email: string, password: string }) {
+    emailLogin(params: { email: string, password: string }): Promise<any> {
         return request({
             url: '/login/cellphone',
             method: "get",
