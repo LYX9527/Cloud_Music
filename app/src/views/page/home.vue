@@ -10,7 +10,9 @@ onMounted(() => {
   getRecommendListData(12)
   getAllTopList()
   getNewAlbumData(12)
-  NProgress.done();
+  nextTick(() => {
+    NProgress.done();
+  })
 })
 //轮播图列表
 const bannerList: Ref<Array<{ encodeId: string, imageUrl: string }>> = ref([]);

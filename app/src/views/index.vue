@@ -1,26 +1,62 @@
 <script lang="ts" setup>
 import api from "@/api/banner"
-import {ICtrlPlayingMusic, setPlayingMusic} from "@/hooks"
+import {animateCSS, ICtrlPlayingMusic, setPlayingMusic} from "@/hooks"
 import Cookies from "js-cookie";
+import Lyric from 'lrc-file-parser'
 import {IState, PlayingMusic} from "@/typings";
 import {ICtrlPlayState, setPlayState} from "@/hooks"
 import {Ref} from "vue";
 
 const router = useRouter();
 const {setplayingmusic}: ICtrlPlayingMusic = setPlayingMusic();
-const {getSongUrl, getUserPlayList} = api
+const {getSongUrl, getUserPlayList, getMusicLyric} = api
 //获取audio元素
 const audio = ref(null)
 //获取vuex的store
 const store = useStore()
 const {setplaystate}: ICtrlPlayState = setPlayState();
+const lyricList: Ref<Array<lines>> = ref([])
 const musicInfo = reactive({
   name: '',
   url: '',
   author: '',
   size: 0,
   picUrl: '',
-  id: ''
+  id: '',
+  lyric: '',
+})
+//歌词界面状态
+const lyricShowState = ref(false)
+
+interface lines {
+  time: Number,
+  text: String,
+}
+
+//歌词
+const lrcCtrl = new Lyric({
+  onPlay(line: Number, text: String) {
+    // console.log(line, text)
+    nowPlayingLyric.value = {
+      line,
+      text
+    }
+    for (let key in lyricList.value) {
+      if (+key == line) {
+        if (line > 5) {
+          document.getElementById("my_lyric")!.scrollTop = 100 * ((line as number) - 5);
+        }
+      }
+    }
+  },
+  onSetLyric(lines: lines[]) {
+    // console.log(lines)
+    lyricList.value = lines
+  },
+  offset: 0,
+  isRemoveBlankLine: true,
+  lyric: '',
+  translationLyric: '',
 })
 const sidebarWidth = ref(0);
 const playStatus = computed(() => store.state.playState)
@@ -30,22 +66,40 @@ const userInfo = computed(() => store.state.userInfo);
 const listStatus = ref(false)
 const audioUrl = ref("");
 const musicProgress = ref(0)
+const nowPlayingLyric: Ref<{ line: Number, text: String }> = ref({line: 0, text: ''})
 //双击播放歌曲
 const playMusicForId = (info: { [key: string]: any }) => {
-  getSongUrl({id: info.id}).then((data: { [key: string]: any }) => {
+  getSongUrl({id: info.id}).then(async (data: { [key: string]: any }) => {
     if (data.code == 200) {
-      const playingMusic: PlayingMusic = {id: "", name: "", url: "", author: "", size: 0, picUrl: ''};
-      console.log(info)
+      const playingMusic: PlayingMusic = {id: "", name: "", url: "", author: "", size: 0, picUrl: '', lyric: ''};
       playingMusic.id = info.id
       playingMusic.url = data.data[0].url
       playingMusic.author = info.ar[0].name
       playingMusic.size = info.dt
       playingMusic.picUrl = info.al.picUrl
       playingMusic.name = info.name
+      playingMusic.lyric = await getMusicLyricData(info.id)
       setplayingmusic(playingMusic);
     }
   })
   setplaystate(true);
+  try {
+    document.getElementById("my_lyric")!.scrollTop = 0;
+  } catch (e) {
+    console.log("切换失败")
+  }
+}
+//获取歌词
+const getMusicLyricData = async (id: string): Promise<string> => {
+  let lyc = ""
+  await getMusicLyric({id}).then((data: { [key: string]: any }) => {
+    if (data.code == 200) {
+      lyc = data.lrc.lyric
+    } else {
+      lyc = "暂无歌词"
+    }
+  })
+  return lyc
 }
 //设置定时器
 let timer: NodeJS.Timer;
@@ -67,8 +121,11 @@ watch([playStatus, playingMusic], (newVal: [boolean, PlayingMusic], oldVal: [boo
     musicInfo.author = playingMusic.value.author
     musicInfo.size = playingMusic.value.size
     musicInfo.id = playingMusic.value.id
+    musicInfo.lyric = playingMusic.value.lyric
     nextTick(() => {
       AudioPlayer.play();
+      lrcCtrl.setLyric(musicInfo.lyric)
+      lrcCtrl.play(0)
       timer = setInterval(() => {
         if (audio.value == null) {
           clearInterval(timer)
@@ -96,12 +153,14 @@ watch([playStatus, playingMusic], (newVal: [boolean, PlayingMusic], oldVal: [boo
     if (newVal[0]) {
       nextTick(() => {
         AudioPlayer.play();
+        lrcCtrl.play(AudioPlayer.currentTime * 1000)
       })
       console.log("我没有换歌 我开始播放了")
 
     } else {
       nextTick(() => {
         AudioPlayer.pause();
+        lrcCtrl.pause()
       })
       console.log("我没有换歌 我暂停了")
     }
@@ -157,6 +216,7 @@ const changeProgress = () => {
   nextTick(() => {
     if (audio.value != null) {
       (audio.value as any).currentTime = musicProgress.value
+      lrcCtrl.play(musicProgress.value * 1000)
     }
   })
 }
@@ -204,6 +264,16 @@ const showPlayList = (id: string) => {
     query: {id}
   })
 }
+//歌词界面显示状态
+const lyricShow = () => {
+  lyricShowState.value = true;
+}
+//隐藏歌词
+const hideLyric = () => {
+  animateCSS(".my_lyric_page", "slideOutDown").then(() => {
+    lyricShowState.value = false;
+  })
+}
 </script>
 <template>
   <div class="common-layout my_xy_full">
@@ -224,7 +294,7 @@ const showPlayList = (id: string) => {
           <span class="text-[16px] flex-1  px-1">{{ v.name }}</span>
         </div>
       </el-aside>
-      <el-container>
+      <el-container class="relative">
         <el-header>
           <div class="w-full h-full flex flex-nowrap">
             <div class="h_ctrl w-1/4">
@@ -331,14 +401,119 @@ const showPlayList = (id: string) => {
             <b-icon-music-note-list @click="listStatus = true" class="my_ctrl_icon"/>
             <b-icon-arrow-repeat class="my_ctrl_icon"/>
             <b-icon-arrow-left-right class="my_ctrl_icon"/>
-            <b-icon-capslock class="my_ctrl_icon"/>
+            <b-icon-capslock @click="lyricShow" class="my_ctrl_icon"/>
           </div>
         </el-footer>
+        <div class="my_lyric_page my_xy_full z-50 bg-[#1f1f1f] absolute top-0 left-0 animate__faster animate__animated"
+             :class="{'animate__slideInUp':lyricShowState,'hidden':!lyricShowState}">
+          <div class="h-[70px] w-full">
+            <div
+                class="h-[55px] w-[55px] absolute right-[48px] transition-all top-[12px] hover:bg-[#2e2e2e]  my_text_center rounded-[10px]"
+                @click="hideLyric">
+              <b-icon-chevron-down class="my_ctrl_icon text-[#5d5d5d] hover:text-[#efefef]"/>
+            </div>
+          </div>
+          <div class="lyric_box">
+            <div class="flex flex-col my_text_between">
+              <img :src="musicInfo.picUrl" class="w-[50%] rounded-[15px] my-1" alt="">
+              <div class="flex-1 w-full flex justify-center">
+                <div class="w-[50%] h-full">
+                  <div class="h-[120px] my-0.5">
+                    <p class="text-[#efefef] font-bold text-[25px]">
+                      {{ musicInfo.name }}
+                    </p>
+                    <p class="text-[#5f5f5f] font-bold text-[18px]">
+                      {{ musicInfo.author }}
+                    </p>
+                  </div>
+                  <div class="my_text_between py-0.5">
+                    <b-icon-skip-backward-fill @click="lastMusic" class="my_ctrl_icon text-[#efefef]" />
+                    <b-icon-skip-end-circle-fill @click="playCtrl" v-if="!playStatus" class="my_ctrl_icon text-[#efefef]"/>
+                    <b-icon-pause-circle-fill @click="playCtrl" v-if="playStatus" class="my_ctrl_icon text-[#efefef]"/>
+                    <b-icon-skip-forward-fill @click="nextMusic" class="my_ctrl_icon text-[#efefef]"/>
+                  </div>
+                  <div class="py-2">
+                    <div class=" w-full my_text_around">
+                      <div class="my_time_step">
+                        {{ ("00" + Math.floor(musicProgress / 60)).slice(-2) }}:{{
+                          ("00" + Math.floor(musicProgress) % 60).slice(-2)
+                        }}
+                      </div>
+                      <div class="flex items-center h-full w-[90%] ml-1.5 mr-0.5">
+                        <el-slider @change="changeProgress" v-model="musicProgress" :step="1" size='small'
+                                   class="h-full w-full " :show-tooltip="false"
+                                   :max="Math.floor(musicInfo.size/1000)"/>
+                      </div>
+                      <div class="my_time_step">
+                        {{ ("00" + Math.floor(Math.floor(musicInfo.size / 1000) / 60)).slice(-2) }}:{{
+                          ("00" + Math.floor(musicInfo.size / 1000) % 60).slice(-2)
+                        }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <ul class="lyric" id="my_lyric">
+                <li :class="{each:true, choose: (index===nowPlayingLyric.line)}" v-for="(item, index) in lyricList"
+                    :key="index">{{ item.text }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </el-container>
     </el-container>
   </div>
 </template>
 <style lang="scss" scoped>
+.lyric {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  color: #ddd;
+  font-weight: normal;
+  padding: 5px 10px;
+  border: 1px solid #000;
+  border-left: none;
+
+  .each {
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    transition: all .2s;
+    color: #6a6a6a;
+    font-size: 30px;
+  }
+
+  .choose {
+    height: 120px;
+    transition: all .2s;
+    line-height: 120px;
+    font-weight: bold;
+    color: #fafafa;
+    font-size: 48px;
+    //transform: scale(1.2);
+  }
+
+  // 修改滚动条样式
+  &::-webkit-scrollbar {
+    width: 3px;
+    height: 1px;
+  }
+
+  // 滑块部分
+  &::-webkit-scrollbar-thumb {
+    background-color: #eee;
+  }
+
+  // 轨道部分
+  &::-webkit-scrollbar-track {
+    background-color: #333;
+  }
+}
+
 .el-drawer {
   width: 400px !important;
 }
@@ -450,5 +625,13 @@ const showPlayList = (id: string) => {
 
 .song_list {
   @apply px-[8px] flex cursor-pointer py-[8px] hover:bg-blue-300
+}
+
+.lyric_box {
+  height: calc(100% - 70px);
+  @apply flex flex-nowrap;
+  > div {
+    @apply flex-1
+  }
 }
 </style>

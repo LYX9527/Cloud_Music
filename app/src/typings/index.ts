@@ -14,6 +14,7 @@ interface PlayingMusic{
     author:string,
     size:number,
     picUrl:string,
+    lyric:string,
 }
 interface IState{
     userInfo:UserInfo,

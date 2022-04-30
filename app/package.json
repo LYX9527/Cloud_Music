@@ -18,6 +18,7 @@
     "buffer": "^6.0.3",
     "element-plus": "^2.1.4",
     "js-cookie": "^3.0.1",
+    "lrc-file-parser": "^1.2.7",
     "nprogress": "^0.2.0",
     "postcss": "^7",
     "postcss-pxtorem": "^6.0.0",

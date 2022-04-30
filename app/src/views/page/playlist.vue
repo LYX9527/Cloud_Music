@@ -2,7 +2,7 @@
 import api from "@/api/banner";
 import {dataFormat} from "@/hooks/utils/dataFormat"
 
-const {getPlayListDetail, getSongDetail, getSongUrl, getPlayListComment} = api
+const {getPlayListDetail, getSongDetail, getSongUrl, getPlayListComment,getMusicLyric} = api
 import {ICtrlMusicList, ICtrlPlayingMusic, ICtrlPlayState, setMusicList, setPlayingMusic, setPlayState} from "@/hooks"
 import {PlayingMusic} from "@/typings";
 import type {TabsPaneContext} from 'element-plus'
@@ -11,7 +11,7 @@ import {Ref} from "vue";
 const activeName = ref('first')
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
-  console.log(tab, event)
+  // console.log(tab, event)
 }
 const {setplaystate}: ICtrlPlayState = setPlayState();
 const {setplayingmusic}: ICtrlPlayingMusic = setPlayingMusic();
@@ -84,8 +84,12 @@ const commentListData: Ref<IComment> = ref({
   comments: [],
   total: 0,
 })
+//懒加载歌曲列表页数
+const songPage: Ref<number> = ref(1)
+//懒加载歌单评论
+const commentPage: Ref<number> = ref(1)
 //获取歌单详情
-const getPlayListDetailData = (id: any) => {
+const getPlayListDetailData = (id: any, page: number = 1, size: number = 20) => {
   getPlayListDetail({id}).then((data: { [key: string]: any }) => {
     if (data.code == 200) {
       playListData.value = data.playlist;
@@ -93,38 +97,56 @@ const getPlayListDetailData = (id: any) => {
       data.playlist.trackIds.forEach((item: { [key: string]: any }) => {
         ids.push(item.id)
       })
-      const str = ids.join(",");
-      getSongDetail({ids: str}).then((data: { [key: string]: any }) => {
-        if (data.code == 200) {
-          songsListData.value = data.songs
-        }
-      })
-      getPlayListComment({id}).then((data: IComment) => {
-        if (data.code == 200) {
-          commentListData.value.comments = data.comments
-          commentListData.value.total = data.total
-          console.log(data)
-        }
-      })
+      const str = ids.slice((page - 1) * size, page * size).join(",");
+      if (str !== "") {
+        getSongDetail({ids: str}).then((data: { [key: string]: any }) => {
+          if (data.code == 200) {
+            songsListData.value = [...songsListData.value, ...data.songs]
+          }
+        })
+      }
+      page === 1 && getPlayListCommentData(id)
+    }
+  })
+}
+//获取歌单评论
+const getPlayListCommentData = (id: any, limit?: number, offset?: number) => {
+  getPlayListComment({id, limit: limit || 20, offset: offset || 0}).then((data: IComment) => {
+    if (data.code == 200) {
+      commentListData.value.comments = [...commentListData.value.comments, ...data.comments]
+      commentListData.value.total = data.total
     }
   })
 }
 //双击播放歌曲
 const playMusicForId = (info: { [key: string]: any }) => {
-  getSongUrl({id: info.id}).then((data: { [key: string]: any }) => {
+  getSongUrl({id: info.id}).then(async (data: { [key: string]: any }) => {
     if (data.code == 200) {
-      const playingMusic: PlayingMusic = {id: "", name: "", url: "", author: "", size: 0, picUrl: ''};
+      const playingMusic: PlayingMusic = {id: "", name: "", url: "", author: "", size: 0, picUrl: '', lyric: ''}
       playingMusic.id = info.id
       playingMusic.url = data.data[0].url
       playingMusic.author = info.ar[0].name
       playingMusic.size = info.dt
       playingMusic.picUrl = info.al.picUrl
       playingMusic.name = info.name
+      playingMusic.lyric = await getMusicLyricData(info.id)
       setplayingmusic(playingMusic);
       setmusiclist(songsListData.value);
     }
   })
   setplaystate(true);
+}
+//获取歌词
+const getMusicLyricData = async (id: string): Promise<string> => {
+  let lyc = ""
+  await getMusicLyric({id}).then((data: { [key: string]: any }) => {
+    if (data.code == 200) {
+      lyc = data.lrc.lyric
+    } else {
+      lyc = "暂无歌词"
+    }
+  })
+  return lyc
 }
 </script>
 <template>
@@ -182,6 +204,11 @@ const playMusicForId = (info: { [key: string]: any }) => {
             }}:{{ ("00" + Math.floor(v.dt / 1000) % 60).slice(-2) }}
           </div>
         </div>
+        <div class="h-3 my-1 my_text_center">
+          <div class="text-[25px] font-bold bg-[#f1f1f5] p-0.5 rounded-3xl px-1.5 cursor-pointer"
+               @click="getPlayListDetailData(route.query.id,++songPage)">加载更多
+          </div>
+        </div>
       </el-tab-pane>
       <el-tab-pane :label="'歌曲评论('+commentListData.total+')'" name="second">
         <div v-for="(v,i) in commentListData.comments" class="flex my-0.5 hover:bg-blue-200 rounded-[12px]" :key="i"
@@ -193,6 +220,11 @@ const playMusicForId = (info: { [key: string]: any }) => {
             }}</span>
           </div>
           <div class="my_text_center p-0.5">{{ dataFormat(new Date(v.time), 'YYYY年MM月DD日 HH:mm:ss') }}</div>
+        </div>
+        <div class="h-3 my-1 my_text_center">
+          <div class="text-[25px] font-bold bg-[#f1f1f5] p-0.5 rounded-3xl px-1.5 cursor-pointer"
+               @click="getPlayListCommentData(route.query.id,20,++commentPage*20)">加载更多
+          </div>
         </div>
       </el-tab-pane>
     </el-tabs>

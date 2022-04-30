@@ -106,4 +106,16 @@ export default {
             params
         })
     },
+    /**
+     * 获取歌词
+     * @param id 歌曲id string
+     */
+    getMusicLyric(params: { id: string }): Promise<any> {
+        return request({
+            url: '/lyric',
+            method: "get",
+            params
+        })
+    },
+
 }

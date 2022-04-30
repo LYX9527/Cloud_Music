@@ -1115,6 +1115,11 @@ lodash@^4.17.21:
   resolved "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
+lrc-file-parser@^1.2.7:
+  version "1.2.7"
+  resolved "https://registry.npmmirror.com/lrc-file-parser/-/lrc-file-parser-1.2.7.tgz#349918bb379ff99f2fb079ed3d61ea7b9a7f15e3"
+  integrity sha512-z2+1tUH3N054vFNXvF8F6g0vXWXf66IWJC1cdue8tfdYlK6FXKPsE3ReUmbzHDber+gmSHt1kDlkCJISZ4BBDQ==
+
 lru-cache@^6.0.0:
   version "6.0.0"
   resolved "https://registry.npmmirror.com/lru-cache/-/lru-cache-6.0.0.tgz"
